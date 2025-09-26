@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Feed with Local Storage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+    <div class="container mx-auto max-w-2xl px-4 py-8">
+        <div class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-blue-600">My Social Feed</h1>
+            <p class="text-gray-500">Posts are saved in your browser's local storage.</p>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-3 mb-6 flex justify-center gap-4">
+            <button id="downloadBtn" class="bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-600 transition duration-300">
+                Download Posts
+            </button>
+            <button id="uploadBtn" class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 transition duration-300">
+                Upload Posts
+            </button>
+            <input type="file" id="uploadFile" class="hidden" accept=".json">
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+            <form id="postForm">
+                <textarea id="postText" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="What's on your mind?"></textarea>
+                <div class="flex justify-between items-center mt-4">
+                    <div>
+                        <label for="imageUpload" class="cursor-pointer text-gray-600 hover:text-blue-500 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14" />
+                            </svg>
+                            <span id="fileName" class="text-sm text-gray-500">Add Photo</span>
+                        </label>
+                        <input type="file" id="imageUpload" class="hidden" accept="image/*">
+                    </div>
+                    <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-5 rounded-lg hover:bg-blue-700 transition duration-300">Post</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="postFeed" class="space-y-6">
+            </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const postForm = document.getElementById('postForm');
+            const postText = document.getElementById('postText');
+            const imageUpload = document.getElementById('imageUpload');
+            const fileNameSpan = document.getElementById('fileName');
+            const postFeed = document.getElementById('postFeed');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const uploadFile = document.getElementById('uploadFile');
+            
+            const STORAGE_KEY = 'socialFeedPosts';
+
+            // --- 1. Display Logic ---
+
+            // Function to get posts from local storage
+            const getPosts = () => {
+                const posts = localStorage.getItem(STORAGE_KEY);
+                return posts ? JSON.parse(posts) : [];
+            };
+
+            // Function to render all posts to the DOM
+            const renderPosts = () => {
+                postFeed.innerHTML = ''; // Clear the feed first
+                const posts = getPosts();
+                posts.forEach(post => {
+                    const postElement = createPostElement(post.text, post.image, post.timestamp);
+                    postFeed.appendChild(postElement);
+                });
+            };
+
+            // Function to create the HTML for a single post
+            const createPostElement = (text, imageSrc, timestamp) => {
+                const postDiv = document.createElement('div');
+                postDiv.className = 'bg-white rounded-lg shadow-md p-4';
+                
+                const date = new Date(timestamp).toLocaleString();
+
+                let imageHTML = '';
+                if (imageSrc) {
+                    imageHTML = `<img src="${imageSrc}" alt="Post Image" class="mt-4 rounded-lg w-full object-cover">`;
+                }
+                
+                postDiv.innerHTML = `
+                    <div class="flex items-start">
+                        <img src="https://i.pravatar.cc/48" alt="User Avatar" class="w-12 h-12 rounded-full mr-4">
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-gray-800">User Name</span>
+                                <span class="text-xs text-gray-500">${date}</span>
+                            </div>
+                            <p class="text-gray-700 mt-2">${text}</p>
+                        </div>
+                    </div>
+                    ${imageHTML}
+                `;
+                return postDiv;
+            };
+
+
+            // --- 2. Post Creation Logic ---
+            postForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const textContent = postText.value.trim();
+                const imageFile = imageUpload.files[0];
+
+                if (!textContent && !imageFile) {
+                    alert('Please write something or upload an image.');
+                    return;
+                }
+
+                if (imageFile) {
+                    // Use FileReader to convert image to Base64 string for local storage
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const imageDataUrl = event.target.result;
+                        savePost(textContent, imageDataUrl);
+                    };
+                    reader.readAsDataURL(imageFile);
+                } else {
+                    savePost(textContent, null);
+                }
+            });
+            
+            // Function to save a new post
+            const savePost = (text, image) => {
+                const posts = getPosts();
+                const newPost = {
+                    text: text,
+                    image: image,
+                    timestamp: new Date().toISOString()
+                };
+                posts.unshift(newPost); // Add new post to the beginning of the array
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+                
+                // Reset form and re-render
+                postForm.reset();
+                fileNameSpan.textContent = 'Add Photo';
+                renderPosts();
+            };
+            
+            // Update file name display when an image is selected
+            imageUpload.addEventListener('change', () => {
+                if (imageUpload.files.length > 0) {
+                    fileNameSpan.textContent = imageUpload.files[0].name;
+                } else {
+                    fileNameSpan.textContent = 'Add Photo';
+                }
+            });
+
+
+            // --- 3. Data Management Logic ---
+
+            // Download posts as a JSON file
+            downloadBtn.addEventListener('click', () => {
+                const posts = getPosts();
+                if (posts.length === 0) {
+                    alert("There are no posts to download.");
+                    return;
+                }
+                const dataStr = JSON.stringify(posts, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `social_feed_backup_${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            });
+
+            // Trigger hidden file input when "Upload" is clicked
+            uploadBtn.addEventListener('click', () => {
+                uploadFile.click();
+            });
+
+            // Handle file upload and restore posts
+            uploadFile.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const newPosts = JSON.parse(e.target.result);
+                        // Basic validation to check if it's an array
+                        if (Array.isArray(newPosts)) {
+                            localStorage.setItem(STORAGE_KEY, JSON.stringify(newPosts));
+                            renderPosts();
+                            alert('Posts imported successfully!');
+                        } else {
+                            throw new Error("Invalid file format.");
+                        }
+                    } catch (error) {
+                        alert(`Error importing file: ${error.message}`);
+                    }
+                };
+                reader.readAsText(file);
+                // Reset the input so the same file can be uploaded again
+                uploadFile.value = '';
+            });
+
+
+            // --- Initial Load ---
+            renderPosts();
+        });
+    </script>
+
+</body>
+</html>
