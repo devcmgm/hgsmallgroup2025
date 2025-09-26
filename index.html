@@ -30,6 +30,27 @@
             z-index: 1;
         }
 
+        .header-banner {
+            position: relative;
+            height: 250px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.6) 100%), 
+                        url("data:image/svg+xml,%3Csvg width='1920' height='250' viewBox='0 0 1920 250' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='1920' height='250' fill='url(%23paint0_linear_1_2)'/%3E%3Cg opacity='0.3'%3E%3Cpath d='M0 125C0 125 240 175 480 125C720 75 960 175 1200 125C1440 75 1680 175 1920 125' stroke='white' stroke-width='2'/%3E%3Cpath d='M0 150C0 150 240 100 480 150C720 200 960 100 1200 150C1440 200 1680 100 1920 150' stroke='white' stroke-width='1.5' opacity='0.5'/%3E%3Cpath d='M0 100C0 100 240 150 480 100C720 50 960 150 1200 100C1440 50 1680 150 1920 100' stroke='white' stroke-width='1' opacity='0.3'/%3E%3C/g%3E%3Ccircle cx='150' cy='60' r='30' fill='white' opacity='0.1'/%3E%3Ccircle cx='350' cy='180' r='20' fill='white' opacity='0.15'/%3E%3Ccircle cx='550' cy='90' r='15' fill='white' opacity='0.1'/%3E%3Ccircle cx='750' cy='160' r='25' fill='white' opacity='0.12'/%3E%3Ccircle cx='950' cy='70' r='18' fill='white' opacity='0.1'/%3E%3Ccircle cx='1150' cy='180' r='22' fill='white' opacity='0.15'/%3E%3Ccircle cx='1350' cy='80' r='20' fill='white' opacity='0.1'/%3E%3Ccircle cx='1550' cy='170' r='16' fill='white' opacity='0.12'/%3E%3Ccircle cx='1750' cy='60' r='24' fill='white' opacity='0.1'/%3E%3Cdefs%3E%3ClinearGradient id='paint0_linear_1_2' x1='0' y1='0' x2='1920' y2='250' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-color='%23667eea'/%3E%3Cstop offset='1' stop-color='%23764ba2'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E");
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-banner::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.1));
+        }
+
         .glass-effect {
             background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(10px);
@@ -38,9 +59,9 @@
         }
 
         .glass-header {
-            background: linear-gradient(135deg, rgba(103, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+            background: linear-gradient(135deg, rgba(103, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
         }
 
@@ -77,6 +98,121 @@
         @keyframes shine {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+
+        .rich-text-editor {
+            border: 2px solid rgba(107, 114, 128, 0.2);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.95);
+            overflow: hidden;
+        }
+
+        .rich-text-toolbar {
+            display: flex;
+            gap: 2px;
+            padding: 8px;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border-bottom: 1px solid rgba(107, 114, 128, 0.2);
+            flex-wrap: wrap;
+        }
+
+        .toolbar-btn {
+            padding: 6px 10px;
+            background: white;
+            border: 1px solid rgba(209, 213, 219, 0.8);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #374151;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .toolbar-btn:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .toolbar-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .toolbar-separator {
+            width: 1px;
+            background: rgba(209, 213, 219, 0.5);
+            margin: 0 4px;
+        }
+
+        .rich-text-content {
+            min-height: 100px;
+            padding: 16px;
+            color: #1f2937;
+            font-size: 15px;
+            line-height: 1.6;
+            outline: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .rich-text-content:focus {
+            background: white;
+        }
+
+        .rich-text-content::before {
+            content: attr(data-placeholder);
+            color: #6b7280;
+            font-weight: 400;
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .rich-text-content:not(:empty)::before {
+            display: none;
+        }
+
+        .emoji-picker {
+            position: relative;
+        }
+
+        .emoji-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border: 1px solid rgba(209, 213, 219, 0.8);
+            border-radius: 8px;
+            padding: 8px;
+            display: none;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 4px;
+            z-index: 100;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .emoji-dropdown.show {
+            display: grid;
+        }
+
+        .emoji-btn {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .emoji-btn:hover {
+            background: #f3f4f6;
+            transform: scale(1.2);
         }
 
         .fade-in {
@@ -260,43 +396,6 @@
             transform: scale(1.2) rotate(90deg);
         }
 
-        .comment-box {
-            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-            border-radius: 12px;
-            padding: 12px;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(209, 213, 219, 0.5);
-        }
-
-        .comment-box:hover {
-            transform: translateX(5px);
-            box-shadow: -5px 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .notification-bubble {
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            z-index: 100;
-            animation: slideIn 0.5s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        .modal-backdrop {
-            backdrop-filter: blur(5px);
-            background: rgba(0, 0, 0, 0.8);
-        }
-
         .input-fancy {
             background: rgba(255, 255, 255, 0.95);
             border: 2px solid rgba(107, 114, 128, 0.2);
@@ -332,6 +431,11 @@
             padding: 12px;
             transition: all 0.3s ease;
             border: 1px solid rgba(209, 213, 219, 0.5);
+        }
+
+        .comment-box:hover {
+            transform: translateX(5px);
+            box-shadow: -5px 5px 15px rgba(0,0,0,0.1);
         }
 
         /* List styles for any content lists */
@@ -385,6 +489,30 @@
             color: #111827;
         }
 
+        .notification-bubble {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 100;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-backdrop {
+            backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.8);
+        }
+
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
@@ -403,14 +531,49 @@
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
         }
+
+        .post-content {
+            color: #1f2937;
+            line-height: 1.6;
+        }
+
+        .post-content strong {
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .post-content em {
+            font-style: italic;
+        }
+
+        .post-content u {
+            text-decoration: underline;
+        }
+
+        .post-content a {
+            color: #4f46e5;
+            text-decoration: underline;
+        }
+
+        .post-content a:hover {
+            color: #6366f1;
+        }
+
+        .post-content blockquote {
+            border-left: 4px solid #667eea;
+            padding-left: 16px;
+            margin: 12px 0;
+            color: #4b5563;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
-    <!-- Fancy Header -->
-    <header class="glass-header sticky top-0 z-40">
-        <div class="max-w-6xl mx-auto px-6 py-4">
-            <div class="flex items-center justify-between">
-                <div class="logo-container">
+    <!-- Header Banner -->
+    <div class="header-banner">
+        <div class="max-w-6xl mx-auto px-6 h-full flex items-center justify-center">
+            <div class="text-center text-white">
+                <div class="logo-container justify-center mb-4">
                     <div class="logo floating">
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
                             <circle cx="9" cy="9" r="4" fill="white" opacity="0.9"/>
@@ -418,9 +581,28 @@
                             <circle cx="12" cy="14" r="4" fill="white" opacity="0.7"/>
                         </svg>
                     </div>
+                </div>
+                <h1 class="text-5xl font-bold mb-2 drop-shadow-lg">Small Group</h1>
+                <p class="text-xl font-medium text-white/90">Tech Meetup Hub 2025</p>
+                <p class="text-sm text-white/80 mt-2">Connect • Create • Collaborate</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sticky Header -->
+    <header class="glass-header sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-6 py-3">
+            <div class="flex items-center justify-between">
+                <div class="logo-container">
+                    <div class="logo">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <circle cx="9" cy="9" r="4" fill="white" opacity="0.9"/>
+                            <circle cx="15" cy="9" r="4" fill="white" opacity="0.8"/>
+                            <circle cx="12" cy="14" r="4" fill="white" opacity="0.7"/>
+                        </svg>
+                    </div>
                     <div>
-                        <h1 class="text-white text-2xl font-bold tracking-tight drop-shadow-lg">Small Group</h1>
-                        <p class="text-white/90 text-xs font-medium">Tech Meetup Hub 2025</p>
+                        <h2 class="text-white text-lg font-bold tracking-tight drop-shadow-lg">Small Group</h2>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
@@ -454,12 +636,82 @@
                     U
                 </div>
                 <div class="flex-1">
-                    <textarea 
-                        id="postContent" 
-                        placeholder="Share your thoughts with the group..." 
-                        class="input-fancy w-full p-4 rounded-xl resize-none focus:outline-none focus:ring-4 focus:ring-purple-500/20"
-                        rows="3"
-                    ></textarea>
+                    <!-- Rich Text Editor -->
+                    <div class="rich-text-editor">
+                        <div class="rich-text-toolbar">
+                            <button class="toolbar-btn" onclick="formatText('bold')" title="Bold">
+                                <strong>B</strong>
+                            </button>
+                            <button class="toolbar-btn" onclick="formatText('italic')" title="Italic">
+                                <em>I</em>
+                            </button>
+                            <button class="toolbar-btn" onclick="formatText('underline')" title="Underline">
+                                <u>U</u>
+                            </button>
+                            <button class="toolbar-btn" onclick="formatText('strikeThrough')" title="Strikethrough">
+                                <s>S</s>
+                            </button>
+                            <div class="toolbar-separator"></div>
+                            <button class="toolbar-btn" onclick="formatText('justifyLeft')" title="Align Left">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M2 3h12v2H2V3zm0 4h8v2H2V7zm0 4h12v2H2v-2z"/>
+                                </svg>
+                            </button>
+                            <button class="toolbar-btn" onclick="formatText('justifyCenter')" title="Align Center">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M4 3h8v2H4V3zm-2 4h12v2H2V7zm2 4h8v2H4v-2z"/>
+                                </svg>
+                            </button>
+                            <button class="toolbar-btn" onclick="formatText('justifyRight')" title="Align Right">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M2 3h12v2H2V3zm4 4h8v2H6V7zm-4 4h12v2H2v-2z"/>
+                                </svg>
+                            </button>
+                            <div class="toolbar-separator"></div>
+                            <button class="toolbar-btn" onclick="formatText('insertOrderedList')" title="Ordered List">
+                                1.
+                            </button>
+                            <button class="toolbar-btn" onclick="formatText('insertUnorderedList')" title="Unordered List">
+                                •
+                            </button>
+                            <button class="toolbar-btn" onclick="insertLink()" title="Insert Link">
+                                🔗
+                            </button>
+                            <div class="toolbar-separator"></div>
+                            <div class="emoji-picker">
+                                <button class="toolbar-btn" onclick="toggleEmojiPicker()" title="Emoji">
+                                    😊
+                                </button>
+                                <div id="emojiDropdown" class="emoji-dropdown">
+                                    <span class="emoji-btn" onclick="insertEmoji('😊')">😊</span>
+                                    <span class="emoji-btn" onclick="insertEmoji('😂')">😂</span>
+                                    <span class="emoji-btn" onclick="insertEmoji('❤️')">❤️</span>
+                                    <span class="emoji-btn" onclick="insertEmoji('👍')">👍</span>
+                                    <span class="emoji-btn" onclick="insertEmoji('🎉')">🎉</span>
+                                    <span class="emoji-btn" onclick="insertEmoji('🔥')">🔥</span>
+                                    <span class="emoji-btn" onclick="insertEmoji('💡')">💡</span>
+                                    <span class="emoji-btn" onclick="insertEmoji('✨')">✨</span>
+                                    <span class="emoji-btn" onclick="insertEmoji('🚀')">🚀</span>
+                                    <span class="emoji-btn" onclick="insertEmoji('💻')">💻</span>
+                                    <span class="emoji-btn" onclick="insertEmoji('📱')">📱</span>
+                                    <span class="emoji-btn" onclick="insertEmoji('🎯')">🎯</span>
+                                    <span class="emoji-btn" onclick="insertEmoji('💪')">💪</span>
+                                    <span class="emoji-btn" onclick="insertEmoji('🌟')">🌟</span>
+                                    <span class="emoji-btn" onclick="insertEmoji('📈')">📈</span>
+                                    <span class="emoji-btn" onclick="insertEmoji('🏆')">🏆</span>
+                                </div>
+                            </div>
+                            <button class="toolbar-btn" onclick="clearFormatting()" title="Clear Formatting">
+                                ✖
+                            </button>
+                        </div>
+                        <div 
+                            id="postContent" 
+                            class="rich-text-content"
+                            contenteditable="true"
+                            data-placeholder="Share your thoughts with the group..."
+                        ></div>
+                    </div>
                     
                     <!-- Image Upload Preview -->
                     <div id="imagePreviewContainer" class="image-upload-preview"></div>
@@ -473,11 +725,11 @@
                                 class="input-fancy px-4 py-2.5 rounded-xl focus:outline-none flex-1"
                             >
                             <!-- Image Upload Button -->
-                            <label for="imageUpload" class="flex items-center space-x-2 text-purple-600 hover:text-purple-700 cursor-pointer transition-all duration-300 hover:scale-105 bg-purple-50 px-4 py-2.5 rounded-xl">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            <label for="imageUpload" class="flex items-center space-x-2 text-indigo-700 hover:text-indigo-800 cursor-pointer transition-all duration-300 hover:scale-105 bg-indigo-100 hover:bg-indigo-200 px-4 py-2.5 rounded-xl font-semibold">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                 </svg>
-                                <span class="text-sm font-semibold">Photos</span>
+                                <span class="text-sm">Photos</span>
                             </label>
                             <input type="file" id="imageUpload" accept="image/*" multiple class="hidden" onchange="handleImageSelect(event)">
                         </div>
@@ -528,7 +780,7 @@
                 {
                     id: 1,
                     author: "Sarah Chen",
-                    content: "🚀 Welcome to Small Group! We're building an amazing community of tech enthusiasts. Can't wait to see what everyone creates!",
+                    content: "<strong>🚀 Welcome to Small Group!</strong> We're building an amazing <em>community of tech enthusiasts</em>. Can't wait to see what everyone creates!",
                     timestamp: new Date().toISOString(),
                     likes: 12,
                     images: [],
@@ -544,7 +796,7 @@
                 {
                     id: 2,
                     author: "Marcus Johnson",
-                    content: "Just finished our hackathon project! The energy here is incredible. Check out what we built using React and Three.js ✨",
+                    content: "Just finished our <strong>hackathon project</strong>! The energy here is <u>incredible</u>. Check out what we built using <em>React and Three.js</em> ✨",
                     timestamp: new Date(Date.now() - 3600000).toISOString(),
                     likes: 24,
                     images: [],
@@ -555,6 +807,51 @@
             appData.nextCommentId = 2;
             renderPosts();
         }
+
+        // Rich Text Editor Functions
+        function formatText(command) {
+            document.execCommand(command, false, null);
+            document.getElementById('postContent').focus();
+        }
+
+        function insertLink() {
+            const url = prompt('Enter URL:');
+            if (url) {
+                document.execCommand('createLink', false, url);
+                document.getElementById('postContent').focus();
+            }
+        }
+
+        function clearFormatting() {
+            document.execCommand('removeFormat', false, null);
+            document.getElementById('postContent').focus();
+        }
+
+        function toggleEmojiPicker() {
+            const dropdown = document.getElementById('emojiDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        function insertEmoji(emoji) {
+            const selection = window.getSelection();
+            const range = selection.getRangeAt(0);
+            const textNode = document.createTextNode(emoji);
+            range.insertNode(textNode);
+            range.setStartAfter(textNode);
+            range.setEndAfter(textNode);
+            selection.removeAllRanges();
+            selection.addRange(range);
+            
+            document.getElementById('emojiDropdown').classList.remove('show');
+            document.getElementById('postContent').focus();
+        }
+
+        // Close emoji picker when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.emoji-picker')) {
+                document.getElementById('emojiDropdown').classList.remove('show');
+            }
+        });
 
         function showMessage(text, type = 'success') {
             const container = document.getElementById('messageContainer');
@@ -631,7 +928,8 @@
         }
 
         function createPost() {
-            const content = document.getElementById('postContent').value.trim();
+            const contentElement = document.getElementById('postContent');
+            const content = contentElement.innerHTML.trim();
             const author = document.getElementById('authorName').value.trim() || 'Anonymous';
 
             if (!content && pendingImages.length === 0) {
@@ -652,7 +950,7 @@
             appData.posts.unshift(newPost);
             
             // Clear form
-            document.getElementById('postContent').value = '';
+            contentElement.innerHTML = '';
             document.getElementById('authorName').value = '';
             pendingImages = [];
             displayPendingImages();
@@ -785,7 +1083,7 @@
                                 </svg>
                             </button>
                         </div>
-                        <p class="mt-4 text-gray-900 leading-relaxed text-lg font-medium">${post.content}</p>
+                        <div class="mt-4 post-content text-lg">${post.content}</div>
                         ${renderImages(post.images)}
                     </div>
 
@@ -920,9 +1218,10 @@
             event.target.value = '';
         }
 
-        // Allow Enter key to submit posts
+        // Allow Ctrl+Enter to submit posts
         document.getElementById('postContent').addEventListener('keypress', function(e) {
             if (e.key === 'Enter' && e.ctrlKey) {
+                e.preventDefault();
                 createPost();
             }
         });
