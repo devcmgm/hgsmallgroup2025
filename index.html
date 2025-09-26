@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Social Feed</title>
+    <title>HG Small Group Tech Meetup 2025 with Images</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .fade-in {
@@ -18,6 +18,65 @@
         }
         .hover-scale:hover {
             transform: scale(1.02);
+        }
+        .image-preview {
+            max-width: 100%;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .image-grid img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .image-grid img:hover {
+            transform: scale(1.05);
+        }
+        .single-image {
+            max-width: 100%;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            cursor: pointer;
+        }
+        .image-upload-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .image-upload-preview img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            border: 2px solid #e5e7eb;
+        }
+        .image-upload-preview .remove-image {
+            position: relative;
+        }
+        .image-upload-preview .remove-btn {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: red;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -52,16 +111,30 @@
                         class="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         rows="3"
                     ></textarea>
+                    
+                    <!-- Image Upload Preview -->
+                    <div id="imagePreviewContainer" class="image-upload-preview"></div>
+                    
                     <div class="flex justify-between items-center mt-3">
-                        <input 
-                            type="text" 
-                            id="authorName" 
-                            placeholder="Your name" 
-                            class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1 mr-3"
-                        >
+                        <div class="flex items-center space-x-3 flex-1">
+                            <input 
+                                type="text" 
+                                id="authorName" 
+                                placeholder="Your name" 
+                                class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1"
+                            >
+                            <!-- Image Upload Button -->
+                            <label for="imageUpload" class="flex items-center space-x-2 text-gray-600 hover:text-blue-600 cursor-pointer transition-colors">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <span class="text-sm font-medium">Add Photos</span>
+                            </label>
+                            <input type="file" id="imageUpload" accept="image/*" multiple class="hidden" onchange="handleImageSelect(event)">
+                        </div>
                         <button 
                             onclick="createPost()" 
-                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors ml-3"
                         >
                             Post
                         </button>
@@ -79,6 +152,16 @@
     <!-- Success/Error Messages -->
     <div id="messageContainer" class="fixed top-20 right-4 z-50"></div>
 
+    <!-- Image Modal -->
+    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 hidden z-50 flex items-center justify-center p-4" onclick="closeImageModal(event)">
+        <img id="modalImage" class="max-w-full max-h-full rounded-lg" alt="Full size image">
+        <button class="absolute top-4 right-4 text-white hover:text-gray-300" onclick="closeImageModal(event)">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+    </div>
+
     <script>
         // In-memory storage (replacing localStorage for this environment)
         let appData = {
@@ -87,15 +170,19 @@
             nextCommentId: 1
         };
 
+        // Temporary storage for images being prepared for a new post
+        let pendingImages = [];
+
         // Initialize with some sample data
         function initializeSampleData() {
             appData.posts = [
                 {
                     id: 1,
                     author: "John Doe",
-                    content: "Welcome to our social feed! Share your thoughts and connect with others.",
+                    content: "Welcome to our HG Small Group Tech Meetup 2025! Share your thoughts and connect with others.",
                     timestamp: new Date().toISOString(),
                     likes: 5,
+                    images: [],
                     comments: [
                         {
                             id: 1,
@@ -111,6 +198,7 @@
                     content: "Beautiful sunset today! 🌅 Nature never fails to amaze me.",
                     timestamp: new Date(Date.now() - 3600000).toISOString(),
                     likes: 12,
+                    images: [],
                     comments: []
                 }
             ];
@@ -144,12 +232,52 @@
             return `${Math.floor(diffInSeconds / 86400)}d ago`;
         }
 
+        function handleImageSelect(event) {
+            const files = Array.from(event.target.files);
+            const maxSize = 5 * 1024 * 1024; // 5MB limit per image
+            
+            files.forEach(file => {
+                if (file.size > maxSize) {
+                    showMessage(`Image ${file.name} is too large. Max size is 5MB.`, 'error');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    pendingImages.push({
+                        data: e.target.result,
+                        name: file.name
+                    });
+                    displayPendingImages();
+                };
+                reader.readAsDataURL(file);
+            });
+            
+            // Reset input
+            event.target.value = '';
+        }
+
+        function displayPendingImages() {
+            const container = document.getElementById('imagePreviewContainer');
+            container.innerHTML = pendingImages.map((img, index) => `
+                <div class="remove-image">
+                    <img src="${img.data}" alt="${img.name}">
+                    <div class="remove-btn" onclick="removePendingImage(${index})">×</div>
+                </div>
+            `).join('');
+        }
+
+        function removePendingImage(index) {
+            pendingImages.splice(index, 1);
+            displayPendingImages();
+        }
+
         function createPost() {
             const content = document.getElementById('postContent').value.trim();
             const author = document.getElementById('authorName').value.trim() || 'Anonymous';
 
-            if (!content) {
-                showMessage('Please write something to post!', 'error');
+            if (!content && pendingImages.length === 0) {
+                showMessage('Please write something or add images to post!', 'error');
                 return;
             }
 
@@ -159,13 +287,17 @@
                 content: content,
                 timestamp: new Date().toISOString(),
                 likes: 0,
+                images: [...pendingImages],
                 comments: []
             };
 
             appData.posts.unshift(newPost);
             
+            // Clear form
             document.getElementById('postContent').value = '';
             document.getElementById('authorName').value = '';
+            pendingImages = [];
+            displayPendingImages();
             
             renderPosts();
             showMessage('Post created successfully!');
@@ -216,6 +348,35 @@
             }
         }
 
+        function openImageModal(imageSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            modalImage.src = imageSrc;
+            modal.classList.remove('hidden');
+        }
+
+        function closeImageModal(event) {
+            if (event.target.id === 'imageModal' || event.target.closest('button')) {
+                document.getElementById('imageModal').classList.add('hidden');
+            }
+        }
+
+        function renderImages(images) {
+            if (!images || images.length === 0) return '';
+            
+            if (images.length === 1) {
+                return `<img src="${images[0].data}" alt="${images[0].name}" class="single-image" onclick="openImageModal('${images[0].data}')">`;
+            }
+            
+            return `
+                <div class="image-grid">
+                    ${images.map(img => `
+                        <img src="${img.data}" alt="${img.name}" onclick="openImageModal('${img.data}')">
+                    `).join('')}
+                </div>
+            `;
+        }
+
         function renderPosts() {
             const container = document.getElementById('postsContainer');
             
@@ -251,6 +412,7 @@
                             </button>
                         </div>
                         <p class="mt-4 text-gray-800 leading-relaxed">${post.content}</p>
+                        ${renderImages(post.images)}
                     </div>
 
                     <!-- Post Actions -->
@@ -335,7 +497,7 @@
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
-            showMessage('Data downloaded successfully!');
+            showMessage('Data downloaded successfully with images as base64!');
         }
 
         function uploadData(event) {
@@ -349,6 +511,13 @@
                     
                     // Validate the data structure
                     if (uploadedData.posts && Array.isArray(uploadedData.posts)) {
+                        // Ensure all posts have images array (for backward compatibility)
+                        uploadedData.posts.forEach(post => {
+                            if (!post.images) {
+                                post.images = [];
+                            }
+                        });
+                        
                         appData = {
                             posts: uploadedData.posts || [],
                             nextPostId: uploadedData.nextPostId || (Math.max(...uploadedData.posts.map(p => p.id), 0) + 1),
@@ -356,12 +525,13 @@
                         };
                         
                         renderPosts();
-                        showMessage('Data uploaded successfully!');
+                        showMessage('Data uploaded successfully with images!');
                     } else {
                         throw new Error('Invalid data format');
                     }
                 } catch (error) {
                     showMessage('Error uploading data. Please check the file format.', 'error');
+                    console.error(error);
                 }
             };
             reader.readAsText(file);
