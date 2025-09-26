@@ -3,138 +3,487 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HG Small Group Tech Meetup 2025 with Images</title>
+    <title>Small Group - Social Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+
+        .glass-header {
+            background: linear-gradient(135deg, rgba(103, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         .fade-in {
-            animation: fadeIn 0.3s ease-in;
+            animation: fadeIn 0.5s ease-in;
         }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { 
+                opacity: 0; 
+                transform: translateY(20px) scale(0.95); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
         }
-        .hover-scale {
-            transition: transform 0.2s ease;
+
+        .hover-lift {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 10;
         }
-        .hover-scale:hover {
-            transform: scale(1.02);
+
+        .hover-lift:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
         }
+
+        .fancy-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            color: white;
+            font-weight: 600;
+        }
+
+        .fancy-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .fancy-button:hover::before {
+            left: 100%;
+        }
+
+        .fancy-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .action-button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            color: white;
+            font-weight: 600;
+        }
+
+        .action-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .like-button {
+            transition: all 0.3s ease;
+        }
+
+        .like-button:hover svg {
+            transform: scale(1.2);
+            fill: #dc2626;
+            stroke: #dc2626;
+        }
+
+        .avatar-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            animation: gradient-shift 3s ease infinite;
+        }
+
+        @keyframes gradient-shift {
+            0%, 100% { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+            50% { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        }
+
         .image-preview {
-            max-width: 100%;
-            border-radius: 0.5rem;
-            margin-top: 1rem;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
         }
+
+        .image-preview:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
         .image-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 0.5rem;
-            margin-top: 1rem;
+            gap: 12px;
+            margin-top: 16px;
         }
+
         .image-grid img {
             width: 100%;
             height: 200px;
             object-fit: cover;
-            border-radius: 0.5rem;
+            border-radius: 12px;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
+
         .image-grid img:hover {
-            transform: scale(1.05);
+            transform: scale(1.08) rotate(1deg);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
         }
+
         .single-image {
             max-width: 100%;
-            border-radius: 0.5rem;
-            margin-top: 1rem;
+            border-radius: 12px;
+            margin-top: 16px;
             cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
         }
+
+        .single-image:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
         .image-upload-preview {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
+            gap: 12px;
+            margin-top: 12px;
         }
+
         .image-upload-preview img {
             width: 100px;
             height: 100px;
             object-fit: cover;
-            border-radius: 0.5rem;
-            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            border: 2px solid transparent;
+            background: linear-gradient(white, white) padding-box,
+                        linear-gradient(135deg, #667eea 0%, #764ba2 100%) border-box;
         }
+
         .image-upload-preview .remove-image {
             position: relative;
         }
+
         .image-upload-preview .remove-btn {
             position: absolute;
-            top: -5px;
-            right: -5px;
-            background: red;
+            top: -8px;
+            right: -8px;
+            background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
             color: white;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(245, 87, 108, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .image-upload-preview .remove-btn:hover {
+            transform: scale(1.2) rotate(90deg);
+        }
+
+        .comment-box {
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            border-radius: 12px;
+            padding: 12px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(209, 213, 219, 0.5);
+        }
+
+        .comment-box:hover {
+            transform: translateX(5px);
+            box-shadow: -5px 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .notification-bubble {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 100;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-backdrop {
+            backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .input-fancy {
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid rgba(107, 114, 128, 0.2);
+            background-clip: padding-box;
+            transition: all 0.3s ease;
+            color: #1f2937;
+            font-weight: 500;
+        }
+
+        .input-fancy:focus {
+            background: white;
+            border: 2px solid #667eea;
+            transform: scale(1.02);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .input-fancy::placeholder {
+            color: #6b7280;
+            font-weight: 400;
+        }
+
+        .stats-pill {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            backdrop-filter: blur(5px);
+            color: #5b21b6;
+            font-weight: 600;
+        }
+
+        .comment-box {
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            border-radius: 12px;
+            padding: 12px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(209, 213, 219, 0.5);
+        }
+
+        /* List styles for any content lists */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin: 0.5rem 0;
+        }
+
+        ul li {
+            list-style-type: disc;
+            color: #374151;
+            margin: 0.25rem 0;
+            font-weight: 500;
+        }
+
+        ol li {
+            list-style-type: decimal;
+            color: #374151;
+            margin: 0.25rem 0;
+            font-weight: 500;
+        }
+
+        /* Better nested list styling */
+        ul ul, ol ol, ul ol, ol ul {
+            margin-top: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Ensure text contrast */
+        .text-high-contrast {
+            color: #111827;
+            font-weight: 600;
+        }
+
+        .text-medium-contrast {
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .text-low-contrast {
+            color: #6b7280;
+            font-weight: 400;
+        }
+
+        /* Ensure all text in posts has good contrast */
+        .glass-effect p, .glass-effect span, .glass-effect div {
+            color: #1f2937;
+        }
+
+        .glass-effect h1, .glass-effect h2, .glass-effect h3 {
+            color: #111827;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
-    <!-- Header -->
-    <header class="bg-blue-600 text-white p-4 shadow-lg">
-        <div class="max-w-4xl mx-auto flex items-center justify-between">
-            <h1 class="text-2xl font-bold">HG Small Group Tech Meetup 2025</h1>
-            <div class="flex space-x-3">
-                <button onclick="downloadData()" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-medium transition-colors">
-                    Download Data
-                </button>
-                <label for="uploadFile" class="bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-lg font-medium cursor-pointer transition-colors">
-                    Upload Data
-                </label>
-                <input type="file" id="uploadFile" accept=".json" class="hidden" onchange="uploadData(event)">
+<body>
+    <!-- Fancy Header -->
+    <header class="glass-header sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="logo-container">
+                    <div class="logo floating">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                            <circle cx="9" cy="9" r="4" fill="white" opacity="0.9"/>
+                            <circle cx="15" cy="9" r="4" fill="white" opacity="0.8"/>
+                            <circle cx="12" cy="14" r="4" fill="white" opacity="0.7"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-white text-2xl font-bold tracking-tight drop-shadow-lg">Small Group</h1>
+                        <p class="text-white/90 text-xs font-medium">Tech Meetup Hub 2025</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="downloadData()" class="bg-white/25 backdrop-blur text-white hover:bg-white/35 px-5 py-2.5 rounded-full font-semibold transition-all duration-300 hover:scale-105 border border-white/30 shadow-lg">
+                        <span class="flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                            </svg>
+                            Download
+                        </span>
+                    </button>
+                    <label for="uploadFile" class="bg-white/25 backdrop-blur text-white hover:bg-white/35 px-5 py-2.5 rounded-full font-semibold cursor-pointer transition-all duration-300 hover:scale-105 border border-white/30 shadow-lg">
+                        <span class="flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            Upload
+                        </span>
+                    </label>
+                    <input type="file" id="uploadFile" accept=".json" class="hidden" onchange="uploadData(event)">
+                </div>
             </div>
         </div>
     </header>
 
-    <div class="max-w-4xl mx-auto p-4">
+    <div class="max-w-4xl mx-auto p-6 relative z-20">
         <!-- Create Post Section -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6 hover-scale">
+        <div class="glass-effect rounded-2xl p-6 mb-8 hover-lift">
             <div class="flex items-start space-x-4">
-                <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                <div class="w-14 h-14 avatar-gradient rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
                     U
                 </div>
                 <div class="flex-1">
                     <textarea 
                         id="postContent" 
-                        placeholder="What's on your mind?" 
-                        class="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Share your thoughts with the group..." 
+                        class="input-fancy w-full p-4 rounded-xl resize-none focus:outline-none focus:ring-4 focus:ring-purple-500/20"
                         rows="3"
                     ></textarea>
                     
                     <!-- Image Upload Preview -->
                     <div id="imagePreviewContainer" class="image-upload-preview"></div>
                     
-                    <div class="flex justify-between items-center mt-3">
+                    <div class="flex justify-between items-center mt-4">
                         <div class="flex items-center space-x-3 flex-1">
                             <input 
                                 type="text" 
                                 id="authorName" 
                                 placeholder="Your name" 
-                                class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1"
+                                class="input-fancy px-4 py-2.5 rounded-xl focus:outline-none flex-1"
                             >
                             <!-- Image Upload Button -->
-                            <label for="imageUpload" class="flex items-center space-x-2 text-gray-600 hover:text-blue-600 cursor-pointer transition-colors">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <label for="imageUpload" class="flex items-center space-x-2 text-purple-600 hover:text-purple-700 cursor-pointer transition-all duration-300 hover:scale-105 bg-purple-50 px-4 py-2.5 rounded-xl">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                 </svg>
-                                <span class="text-sm font-medium">Add Photos</span>
+                                <span class="text-sm font-semibold">Photos</span>
                             </label>
                             <input type="file" id="imageUpload" accept="image/*" multiple class="hidden" onchange="handleImageSelect(event)">
                         </div>
                         <button 
                             onclick="createPost()" 
-                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors ml-3"
+                            class="fancy-button text-white px-8 py-2.5 rounded-xl font-semibold transition-all ml-3"
                         >
                             Post
                         </button>
@@ -149,15 +498,15 @@
         </div>
     </div>
 
-    <!-- Success/Error Messages -->
-    <div id="messageContainer" class="fixed top-20 right-4 z-50"></div>
+    <!-- Fancy Notification Container -->
+    <div id="messageContainer" class="notification-bubble"></div>
 
     <!-- Image Modal -->
-    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 hidden z-50 flex items-center justify-center p-4" onclick="closeImageModal(event)">
-        <img id="modalImage" class="max-w-full max-h-full rounded-lg" alt="Full size image">
-        <button class="absolute top-4 right-4 text-white hover:text-gray-300" onclick="closeImageModal(event)">
+    <div id="imageModal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4" onclick="closeImageModal(event)">
+        <img id="modalImage" class="max-w-full max-h-full rounded-2xl shadow-2xl" alt="Full size image">
+        <button class="absolute top-4 right-4 text-white hover:text-gray-300 bg-black/50 rounded-full p-2 backdrop-blur" onclick="closeImageModal(event)">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
         </button>
     </div>
@@ -178,26 +527,26 @@
             appData.posts = [
                 {
                     id: 1,
-                    author: "John Doe",
-                    content: "Welcome to our HG Small Group Tech Meetup 2025! Share your thoughts and connect with others.",
+                    author: "Sarah Chen",
+                    content: "🚀 Welcome to Small Group! We're building an amazing community of tech enthusiasts. Can't wait to see what everyone creates!",
                     timestamp: new Date().toISOString(),
-                    likes: 5,
+                    likes: 12,
                     images: [],
                     comments: [
                         {
                             id: 1,
-                            author: "Jane Smith",
-                            content: "Great to be here!",
+                            author: "Alex Rivera",
+                            content: "So excited to be part of this! 🎉",
                             timestamp: new Date().toISOString()
                         }
                     ]
                 },
                 {
                     id: 2,
-                    author: "Alice Johnson",
-                    content: "Beautiful sunset today! 🌅 Nature never fails to amaze me.",
+                    author: "Marcus Johnson",
+                    content: "Just finished our hackathon project! The energy here is incredible. Check out what we built using React and Three.js ✨",
                     timestamp: new Date(Date.now() - 3600000).toISOString(),
-                    likes: 12,
+                    likes: 24,
                     images: [],
                     comments: []
                 }
@@ -210,14 +559,23 @@
         function showMessage(text, type = 'success') {
             const container = document.getElementById('messageContainer');
             const message = document.createElement('div');
-            message.className = `p-4 rounded-lg shadow-lg mb-2 fade-in ${
-                type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-            }`;
-            message.textContent = text;
+            const bgColor = type === 'success' 
+                ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' 
+                : 'linear-gradient(135deg, #f5576c 0%, #f093fb 100%)';
+            
+            message.style.background = bgColor;
+            message.className = 'p-4 rounded-2xl shadow-xl mb-3 text-white font-medium flex items-center gap-3 min-w-[250px]';
+            
+            const icon = type === 'success' 
+                ? '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>'
+                : '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+            
+            message.innerHTML = icon + '<span>' + text + '</span>';
             container.appendChild(message);
             
             setTimeout(() => {
-                message.remove();
+                message.style.animation = 'slideIn 0.5s ease reverse';
+                setTimeout(() => message.remove(), 500);
             }, 3000);
         }
 
@@ -300,7 +658,7 @@
             displayPendingImages();
             
             renderPosts();
-            showMessage('Post created successfully!');
+            showMessage('Post created successfully! ✨');
         }
 
         function likePost(postId) {
@@ -336,7 +694,7 @@
                 commentInput.value = '';
                 authorInput.value = '';
                 renderPosts();
-                showMessage('Comment added!');
+                showMessage('Comment added! 💬');
             }
         }
 
@@ -377,59 +735,81 @@
             `;
         }
 
+        function getAvatarColor(name) {
+            const colors = [
+                'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+                'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+                'linear-gradient(135deg, #30cfd0 0%, #330867 100%)'
+            ];
+            let hash = 0;
+            for (let i = 0; i < name.length; i++) {
+                hash = name.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            return colors[Math.abs(hash) % colors.length];
+        }
+
         function renderPosts() {
             const container = document.getElementById('postsContainer');
             
             if (appData.posts.length === 0) {
                 container.innerHTML = `
-                    <div class="text-center py-12 text-gray-500">
-                        <div class="text-6xl mb-4">📝</div>
-                        <h3 class="text-xl font-semibold mb-2">No posts yet</h3>
-                        <p>Be the first to share something!</p>
+                    <div class="glass-effect rounded-2xl p-12 text-center">
+                        <div class="text-7xl mb-4 floating">✨</div>
+                        <h3 class="text-2xl font-bold mb-3 text-gray-900">No posts yet</h3>
+                        <p class="text-gray-700 font-medium">Be the first to share something amazing!</p>
                     </div>
                 `;
                 return;
             }
 
             container.innerHTML = appData.posts.map(post => `
-                <div class="bg-white rounded-lg shadow-md hover-scale fade-in">
+                <div class="glass-effect rounded-2xl hover-lift fade-in">
                     <!-- Post Header -->
                     <div class="p-6 border-b border-gray-100">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-3">
-                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                                <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg" style="background: ${getAvatarColor(post.author)}">
                                     ${post.author.charAt(0).toUpperCase()}
                                 </div>
                                 <div>
-                                    <h3 class="font-semibold text-gray-900">${post.author}</h3>
-                                    <p class="text-sm text-gray-500">${formatTimeAgo(post.timestamp)}</p>
+                                    <h3 class="font-semibold text-gray-900 text-lg">${post.author}</h3>
+                                    <p class="text-sm text-indigo-600 font-semibold">${formatTimeAgo(post.timestamp)}</p>
                                 </div>
                             </div>
-                            <button onclick="deletePost(${post.id})" class="text-gray-400 hover:text-red-500 transition-colors">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            <button onclick="deletePost(${post.id})" class="text-gray-600 hover:text-red-600 transition-all duration-300 hover:scale-110 bg-gray-100 hover:bg-red-100 p-2 rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                 </svg>
                             </button>
                         </div>
-                        <p class="mt-4 text-gray-800 leading-relaxed">${post.content}</p>
+                        <p class="mt-4 text-gray-900 leading-relaxed text-lg font-medium">${post.content}</p>
                         ${renderImages(post.images)}
                     </div>
 
-                    <!-- Post Actions -->
+                    <!-- Post Stats -->
                     <div class="px-6 py-3 border-b border-gray-100">
-                        <div class="flex items-center justify-between text-sm text-gray-500">
-                            <span>${post.likes} likes</span>
-                            <span>${post.comments.length} comments</span>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <span class="stats-pill px-4 py-1.5 rounded-full text-sm">
+                                    ${post.likes} ${post.likes === 1 ? 'like' : 'likes'}
+                                </span>
+                                <span class="stats-pill px-4 py-1.5 rounded-full text-sm">
+                                    ${post.comments.length} ${post.comments.length === 1 ? 'comment' : 'comments'}
+                                </span>
+                            </div>
                         </div>
                     </div>
 
                     <div class="px-6 py-3 border-b border-gray-100">
                         <button 
                             onclick="likePost(${post.id})" 
-                            class="flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors"
+                            class="like-button flex items-center space-x-2 text-gray-700 hover:text-red-600 transition-all duration-300 font-semibold"
                         >
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                            <svg class="w-6 h-6 transition-all duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                             </svg>
                             <span>Like</span>
                         </button>
@@ -439,22 +819,22 @@
                     <div class="p-6">
                         ${post.comments.map(comment => `
                             <div class="flex space-x-3 mb-4">
-                                <div class="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white text-sm font-bold shadow-md" style="background: ${getAvatarColor(comment.author)}">
                                     ${comment.author.charAt(0).toUpperCase()}
                                 </div>
-                                <div class="flex-1 bg-gray-50 rounded-lg p-3">
+                                <div class="flex-1 comment-box">
                                     <div class="flex items-center justify-between mb-1">
-                                        <span class="font-medium text-sm text-gray-900">${comment.author}</span>
-                                        <span class="text-xs text-gray-500">${formatTimeAgo(comment.timestamp)}</span>
+                                        <span class="font-semibold text-sm text-gray-900">${comment.author}</span>
+                                        <span class="text-xs text-indigo-600 font-semibold">${formatTimeAgo(comment.timestamp)}</span>
                                     </div>
-                                    <p class="text-sm text-gray-800">${comment.content}</p>
+                                    <p class="text-sm text-gray-800 font-medium">${comment.content}</p>
                                 </div>
                             </div>
                         `).join('')}
 
                         <!-- Add Comment Form -->
                         <div class="flex space-x-3 mt-4">
-                            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                            <div class="w-10 h-10 rounded-xl avatar-gradient flex items-center justify-center text-white text-sm font-bold shadow-md">
                                 U
                             </div>
                             <div class="flex-1 space-y-2">
@@ -462,19 +842,19 @@
                                     type="text" 
                                     id="comment-author-${post.id}" 
                                     placeholder="Your name" 
-                                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    class="input-fancy w-full px-4 py-2.5 text-sm rounded-xl focus:outline-none"
                                 >
                                 <div class="flex space-x-2">
                                     <input 
                                         type="text" 
                                         id="comment-${post.id}" 
                                         placeholder="Write a comment..." 
-                                        class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        class="input-fancy flex-1 px-4 py-2.5 text-sm rounded-xl focus:outline-none"
                                         onkeypress="if(event.key==='Enter') addComment(${post.id})"
                                     >
                                     <button 
                                         onclick="addComment(${post.id})" 
-                                        class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                                        class="action-button px-5 py-2.5 text-white text-sm rounded-xl font-semibold transition-all"
                                     >
                                         Post
                                     </button>
@@ -492,12 +872,12 @@
             const url = URL.createObjectURL(dataBlob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `social-feed-data-${new Date().toISOString().split('T')[0]}.json`;
+            link.download = `small-group-data-${new Date().toISOString().split('T')[0]}.json`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
-            showMessage('Data downloaded successfully with images as base64!');
+            showMessage('Data exported successfully! 📥');
         }
 
         function uploadData(event) {
@@ -525,12 +905,12 @@
                         };
                         
                         renderPosts();
-                        showMessage('Data uploaded successfully with images!');
+                        showMessage('Data imported successfully! 📤');
                     } else {
                         throw new Error('Invalid data format');
                     }
                 } catch (error) {
-                    showMessage('Error uploading data. Please check the file format.', 'error');
+                    showMessage('Error importing data. Please check the file format.', 'error');
                     console.error(error);
                 }
             };
