@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Feed</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .hover-scale {
+            transition: transform 0.2s ease;
+        }
+        .hover-scale:hover {
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-blue-600 text-white p-4 shadow-lg">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <h1 class="text-2xl font-bold">HG Small Group Tech Meetup 2025</h1>
+            <div class="flex space-x-3">
+                <button onclick="downloadData()" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg font-medium transition-colors">
+                    Download Data
+                </button>
+                <label for="uploadFile" class="bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-lg font-medium cursor-pointer transition-colors">
+                    Upload Data
+                </label>
+                <input type="file" id="uploadFile" accept=".json" class="hidden" onchange="uploadData(event)">
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-4xl mx-auto p-4">
+        <!-- Create Post Section -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6 hover-scale">
+            <div class="flex items-start space-x-4">
+                <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                    U
+                </div>
+                <div class="flex-1">
+                    <textarea 
+                        id="postContent" 
+                        placeholder="What's on your mind?" 
+                        class="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        rows="3"
+                    ></textarea>
+                    <div class="flex justify-between items-center mt-3">
+                        <input 
+                            type="text" 
+                            id="authorName" 
+                            placeholder="Your name" 
+                            class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1 mr-3"
+                        >
+                        <button 
+                            onclick="createPost()" 
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+                        >
+                            Post
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Posts Feed -->
+        <div id="postsContainer" class="space-y-6">
+            <!-- Posts will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div id="messageContainer" class="fixed top-20 right-4 z-50"></div>
+
+    <script>
+        // In-memory storage (replacing localStorage for this environment)
+        let appData = {
+            posts: [],
+            nextPostId: 1,
+            nextCommentId: 1
+        };
+
+        // Initialize with some sample data
+        function initializeSampleData() {
+            appData.posts = [
+                {
+                    id: 1,
+                    author: "John Doe",
+                    content: "Welcome to our social feed! Share your thoughts and connect with others.",
+                    timestamp: new Date().toISOString(),
+                    likes: 5,
+                    comments: [
+                        {
+                            id: 1,
+                            author: "Jane Smith",
+                            content: "Great to be here!",
+                            timestamp: new Date().toISOString()
+                        }
+                    ]
+                },
+                {
+                    id: 2,
+                    author: "Alice Johnson",
+                    content: "Beautiful sunset today! 🌅 Nature never fails to amaze me.",
+                    timestamp: new Date(Date.now() - 3600000).toISOString(),
+                    likes: 12,
+                    comments: []
+                }
+            ];
+            appData.nextPostId = 3;
+            appData.nextCommentId = 2;
+            renderPosts();
+        }
+
+        function showMessage(text, type = 'success') {
+            const container = document.getElementById('messageContainer');
+            const message = document.createElement('div');
+            message.className = `p-4 rounded-lg shadow-lg mb-2 fade-in ${
+                type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+            }`;
+            message.textContent = text;
+            container.appendChild(message);
+            
+            setTimeout(() => {
+                message.remove();
+            }, 3000);
+        }
+
+        function formatTimeAgo(timestamp) {
+            const now = new Date();
+            const past = new Date(timestamp);
+            const diffInSeconds = Math.floor((now - past) / 1000);
+
+            if (diffInSeconds < 60) return 'Just now';
+            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+            return `${Math.floor(diffInSeconds / 86400)}d ago`;
+        }
+
+        function createPost() {
+            const content = document.getElementById('postContent').value.trim();
+            const author = document.getElementById('authorName').value.trim() || 'Anonymous';
+
+            if (!content) {
+                showMessage('Please write something to post!', 'error');
+                return;
+            }
+
+            const newPost = {
+                id: appData.nextPostId++,
+                author: author,
+                content: content,
+                timestamp: new Date().toISOString(),
+                likes: 0,
+                comments: []
+            };
+
+            appData.posts.unshift(newPost);
+            
+            document.getElementById('postContent').value = '';
+            document.getElementById('authorName').value = '';
+            
+            renderPosts();
+            showMessage('Post created successfully!');
+        }
+
+        function likePost(postId) {
+            const post = appData.posts.find(p => p.id === postId);
+            if (post) {
+                post.likes++;
+                renderPosts();
+            }
+        }
+
+        function addComment(postId) {
+            const commentInput = document.getElementById(`comment-${postId}`);
+            const authorInput = document.getElementById(`comment-author-${postId}`);
+            
+            const content = commentInput.value.trim();
+            const author = authorInput.value.trim() || 'Anonymous';
+
+            if (!content) {
+                showMessage('Please write a comment!', 'error');
+                return;
+            }
+
+            const post = appData.posts.find(p => p.id === postId);
+            if (post) {
+                const newComment = {
+                    id: appData.nextCommentId++,
+                    author: author,
+                    content: content,
+                    timestamp: new Date().toISOString()
+                };
+
+                post.comments.push(newComment);
+                commentInput.value = '';
+                authorInput.value = '';
+                renderPosts();
+                showMessage('Comment added!');
+            }
+        }
+
+        function deletePost(postId) {
+            if (confirm('Are you sure you want to delete this post?')) {
+                appData.posts = appData.posts.filter(p => p.id !== postId);
+                renderPosts();
+                showMessage('Post deleted!');
+            }
+        }
+
+        function renderPosts() {
+            const container = document.getElementById('postsContainer');
+            
+            if (appData.posts.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-500">
+                        <div class="text-6xl mb-4">📝</div>
+                        <h3 class="text-xl font-semibold mb-2">No posts yet</h3>
+                        <p>Be the first to share something!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = appData.posts.map(post => `
+                <div class="bg-white rounded-lg shadow-md hover-scale fade-in">
+                    <!-- Post Header -->
+                    <div class="p-6 border-b border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                                    ${post.author.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">${post.author}</h3>
+                                    <p class="text-sm text-gray-500">${formatTimeAgo(post.timestamp)}</p>
+                                </div>
+                            </div>
+                            <button onclick="deletePost(${post.id})" class="text-gray-400 hover:text-red-500 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="mt-4 text-gray-800 leading-relaxed">${post.content}</p>
+                    </div>
+
+                    <!-- Post Actions -->
+                    <div class="px-6 py-3 border-b border-gray-100">
+                        <div class="flex items-center justify-between text-sm text-gray-500">
+                            <span>${post.likes} likes</span>
+                            <span>${post.comments.length} comments</span>
+                        </div>
+                    </div>
+
+                    <div class="px-6 py-3 border-b border-gray-100">
+                        <button 
+                            onclick="likePost(${post.id})" 
+                            class="flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                            </svg>
+                            <span>Like</span>
+                        </button>
+                    </div>
+
+                    <!-- Comments Section -->
+                    <div class="p-6">
+                        ${post.comments.map(comment => `
+                            <div class="flex space-x-3 mb-4">
+                                <div class="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                                    ${comment.author.charAt(0).toUpperCase()}
+                                </div>
+                                <div class="flex-1 bg-gray-50 rounded-lg p-3">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="font-medium text-sm text-gray-900">${comment.author}</span>
+                                        <span class="text-xs text-gray-500">${formatTimeAgo(comment.timestamp)}</span>
+                                    </div>
+                                    <p class="text-sm text-gray-800">${comment.content}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+
+                        <!-- Add Comment Form -->
+                        <div class="flex space-x-3 mt-4">
+                            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                                U
+                            </div>
+                            <div class="flex-1 space-y-2">
+                                <input 
+                                    type="text" 
+                                    id="comment-author-${post.id}" 
+                                    placeholder="Your name" 
+                                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                <div class="flex space-x-2">
+                                    <input 
+                                        type="text" 
+                                        id="comment-${post.id}" 
+                                        placeholder="Write a comment..." 
+                                        class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        onkeypress="if(event.key==='Enter') addComment(${post.id})"
+                                    >
+                                    <button 
+                                        onclick="addComment(${post.id})" 
+                                        class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                                    >
+                                        Post
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function downloadData() {
+            const dataStr = JSON.stringify(appData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `social-feed-data-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showMessage('Data downloaded successfully!');
+        }
+
+        function uploadData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const uploadedData = JSON.parse(e.target.result);
+                    
+                    // Validate the data structure
+                    if (uploadedData.posts && Array.isArray(uploadedData.posts)) {
+                        appData = {
+                            posts: uploadedData.posts || [],
+                            nextPostId: uploadedData.nextPostId || (Math.max(...uploadedData.posts.map(p => p.id), 0) + 1),
+                            nextCommentId: uploadedData.nextCommentId || 1
+                        };
+                        
+                        renderPosts();
+                        showMessage('Data uploaded successfully!');
+                    } else {
+                        throw new Error('Invalid data format');
+                    }
+                } catch (error) {
+                    showMessage('Error uploading data. Please check the file format.', 'error');
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset the input
+            event.target.value = '';
+        }
+
+        // Allow Enter key to submit posts
+        document.getElementById('postContent').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                createPost();
+            }
+        });
+
+        // Initialize the app
+        initializeSampleData();
+    </script>
+</body>
+</html>
